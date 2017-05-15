@@ -1,0 +1,38 @@
+_________
+Script 1:
+
+This script iterates through all positional parameters (call-arguments) and tries to chmod files that equal the positional parameters to 0750, which means:
+user: rwx (full-access)
+group: r-x (read and execute)
+world: --- (no access)
+
+So basically, you can hand a list of files to the script (as [relative] paths) and chmod those files to 0750
+
+$# is an array-like construct of all positional parameters
+
+_________
+Script 2:
+
+The second script counts how many positional parameters have been passed ($#).
+It will exit with return value 1, if there are less than 3, exit with 2, in case there are more than 3 parameters.
+In both cases there will also be a error message redirected from standard output to the stderr stream (or file?)
+
+The ">" redirects the printf "..." to &2, whereas "&" indicates a file descriptor, and 2 is the stderr file descriptor number, so we just redirect stdout to stderr
+
+But if you hand exactly 3 parameters, we are allowed to proceed (and some message is printed on the stdout)
+
+With "%b" before the actual string in printf, we can tell to interpret backslash escapes
+
+_________
+Script 3:
+
+the first positional parameter is used as "INFILE" and the second as "OUTFILE". 
+
+The "[" is actually a real command with an unusual name - it's a synonym for "test".
+so "if [ -e ... ]" is equal to "if test -e ..."
+-e asks to check "test", whether the file exists.
+If it does, then we also check if the outfile exists AND we have write-access
+
+In case both cases are true, the content of the file that matches the first positional parameter will be outputed to the stdout, which then is redirected to the file given in the second positional parameter
+
+Basically, a simple copy to, whereas both files must exist.
